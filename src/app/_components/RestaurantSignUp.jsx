@@ -1,3 +1,5 @@
+ 
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useState } from 'react'
 
@@ -10,17 +12,22 @@ function RestaurantSignUp() {
     const [city, setCity] = useState('')
     const [address, setAddress] = useState('')
     const [contact, setContact] = useState('')
+    const router = useRouter();
     const handleSignup = async () => {
         event.preventDefault();
         console.log(email, password, c_Password, name, city, address, contact);
-        let result = await fetch("http://localhost:3000/api/restaurants", {
+        let response = await fetch("http://localhost:3000/api/restaurants", {
             method: "POST",
             body: JSON.stringify({ email, password, name, city, address, contact })
         });
-        result = await result.json();
-        console.log(result);
-        if(result.success){
+        response = await response.json();
+        console.log(response);
+        if(response.success){
             alert("Restaurant Added Sucessfully!!");
+            const {result} = response
+            delete result.password;
+            localStorage.setItem("restaurantUser", JSON.stringify(result));
+            router.push('http://localhost:3000/restaurant/dashboard');
         }
     }
     return (
